@@ -90,7 +90,7 @@ def google_table(dict_cards):
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, 'credentials.json')
+    SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, '../parser_1/credentials.json')
 
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -103,19 +103,17 @@ def google_table(dict_cards):
         service = build('sheets', 'v4', credentials=credentials).spreadsheets().values()
 
         # Чистим(удаляет) весь лист
-        rangeAll = '{0}!A1:Z'.format(SAMPLE_RANGE_NAME)
         array_clear = {}
         clear_table = service.clear(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                    range=rangeAll,
+                                    range=SAMPLE_RANGE_NAME,
                                     body=array_clear).execute()
 
         # добавляет информации
-        range_ = 'Zeta.kz'
         array = {'values': dict_cards}
         response = service.append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                  range=range_,
+                                  range=SAMPLE_RANGE_NAME,
                                   valueInputOption='USER_ENTERED',
-                                  insertDataOption='INSERT_ROWS',
+                                  insertDataOption='OVERWRITE',
                                   body=array).execute()
 
     except HttpError as err:
@@ -123,10 +121,16 @@ def google_table(dict_cards):
 
 
 def main():
-    schedule.every(1).hour.do(get_data)
+    # start_time = datetime.datetime.now()
+
+    schedule.every(55).minutes.do(get_data)
 
     while True:
         schedule.run_pending()
+
+    # finish_time = datetime.datetime.now()
+    # spent_time = finish_time - start_time
+    # print(spent_time)
 
 
 if __name__ == '__main__':
