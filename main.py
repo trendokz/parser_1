@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import schedule
+from datetime import datetime
 
 
 url = 'https://zeta.kz/'
@@ -95,7 +96,7 @@ def google_table(dict_cards):
 
     # mail bot 'parsers@parsers-372008.iam.gserviceaccount.com'
     SAMPLE_SPREADSHEET_ID = '107SdHe8_dV6npe_dKE-7xA2QJgxz6ZOywOy-GZyrZX0'
-    SAMPLE_RANGE_NAME = 'Zeta.kz'
+    SAMPLE_RANGE_NAME = 'Zeta.kz!A1:C'
 
     try:
         service = build('sheets', 'v4', credentials=credentials).spreadsheets().values()
@@ -119,16 +120,16 @@ def google_table(dict_cards):
 
 
 def main():
-    # start_time = datetime.datetime.now()
+    start_time = datetime.now()
 
     schedule.every(55).minutes.do(get_data)
 
     while True:
         schedule.run_pending()
 
-    # finish_time = datetime.datetime.now()
-    # spent_time = finish_time - start_time
-    # print(spent_time)
+    finish_time = datetime.now()
+    spent_time = finish_time - start_time
+    print(spent_time)
 
 
 if __name__ == '__main__':
